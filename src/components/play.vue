@@ -59,11 +59,12 @@ export default {
     return {
       song_url:"",
       img_url:'',
-      song_info:''
+      song_info:'',
+      lyric:''
     }
    },
    methods:{
-    searchMusicUrl(){
+     searchMusicUrl(){
           let _this=this,_filename=`C400${this.song_info.songmid}.m4a`;
           $.ajax({
               type: "get",
@@ -88,6 +89,20 @@ export default {
           _this.song_url=`http://ws.stream.qqmusic.qq.com/${_filename}?guid=4529237216&vkey=${_vkey}&fromtag=0`;           
       },
       getlyric(){
+          let _this=this;
+          $.ajax({
+              type: "get",
+              async: false,
+              url:`http://localhost:3200/getLyric?songmid=${this.song_info.songmid}`,
+              dataType: "json",
+              success: function(res) {
+                  console.log(res['response']['lyric']);
+                //_this.getSongUrl(arr['vkey'],arr['filename']);
+              },
+              error: function() {
+                alert('fail');
+              }
+          });
       },
       playSong(){
           if($(".js-play").hasClass("icon_play--pause")){
@@ -96,6 +111,7 @@ export default {
           }else{
             $(".js-play").addClass("icon_play--pause");
             this.searchMusicUrl();
+            this.getlyric();
             //console.log(this.$route.params.data);
             //this.getlyric();
           }

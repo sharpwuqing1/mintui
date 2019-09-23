@@ -9,7 +9,8 @@
           <p>热门歌单</p>
           <ul class="songlist-box">
             <li class="songlist-item" v-for="k,i  in songlists"  :key="i">
-              <img :src="k.picUrl.replace(/http/,'https')">
+              <!-- <img :src="k.picUrl.replace(/http/,'https')"> -->
+              <img :src="k.image">
             </li>
           </ul>
         </div>
@@ -39,8 +40,30 @@ export default {
               scriptCharset: 'GBK',//设置编码，否则会乱码
               success: function(res) {
                 _this.sliders=res['data']['slider'];
-                _this.songlists=res['data']['songList'];
+                //_this.songlists=res['data']['songList'];
                 //console.log(res);
+              },
+              error: function() {
+                alert('fail');
+              }
+            });
+      },
+      hotSongList()
+      {
+        let _this=this;
+        $.ajax({
+              type: "get",
+              async: false,
+              //url:"http://m.music.migu.cn/migu/remoting/client_play_list_tag?jsonpCallback=callback&format=jsonp",
+              url: 'http://sharp2.com/music.php',
+              //dataType: "jsonp",
+              //jsonp: "callback",
+              //jsonpCallback: "callback",
+              //scriptCharset: 'GBK',//设置编码，否则会乱码
+              success: function(ret) {
+                let result = JSON.parse(ret);
+                //console.log(result['msg']);
+                 _this.songlists = result['msg'];
               },
               error: function() {
                 alert('fail');
@@ -50,7 +73,8 @@ export default {
   },
   mounted(){
         this.$nextTick(function (){
-                this.topView()
+                this.topView();
+                this.hotSongList();
           })
     }
 }
