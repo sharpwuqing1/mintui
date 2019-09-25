@@ -93,11 +93,10 @@ export default {
           $.ajax({
               type: "get",
               async: false,
-              url:`http://localhost:3200/getLyric?songmid=${this.song_info.songmid}`,
+              url:`http://my.sharpwuqing.cn/lyric?songmid=${this.song_info.songmid}`,
               dataType: "json",
               success: function(res) {
-                  console.log(res['response']['lyric']);
-                //_this.getSongUrl(arr['vkey'],arr['filename']);
+                  console.log(res);
               },
               error: function() {
                 alert('fail');
@@ -113,7 +112,6 @@ export default {
             this.searchMusicUrl();
             this.getlyric();
             //console.log(this.$route.params.data);
-            //this.getlyric();
           }
       }
    },

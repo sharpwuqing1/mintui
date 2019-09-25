@@ -17,6 +17,14 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+
+body {
+    font: 12px/1.5 "hiragino sans gb",arial;
+    color: #555;
+    background: #f4f4f4;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-user-select: none;
+}
 body,div{
   margin:0;
 }
