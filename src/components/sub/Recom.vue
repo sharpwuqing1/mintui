@@ -139,7 +139,7 @@ export default {
     .mod_twocol_list li {
       float: left;
       width: 50%;
-      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
       padding-right: 8px;
       margin-bottom: 10px;
       overflow: hidden;
