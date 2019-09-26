@@ -111,7 +111,9 @@ export default {
             $(".js-play").addClass("icon_play--pause");
             this.searchMusicUrl();
             this.getlyric();
+            let attribute  = $('#music-player').attr('duration');
             //console.log(this.$route.params.data);
+            console.log(attribute);
           }
       }
    },

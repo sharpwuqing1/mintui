@@ -66,16 +66,11 @@ export default {
         $.ajax({
               type: "get",
               async: false,
-              //url:"http://m.music.migu.cn/migu/remoting/client_play_list_tag?jsonpCallback=callback&format=jsonp",
-              url: 'http://localhost:3200/getRecommend',
-              //dataType: "jsonp",
-              //jsonp: "callback",
-              //jsonpCallback: "callback",
-              //scriptCharset: 'GBK',//设置编码，否则会乱码
+              url: 'http://my.sharpwuqing.cn/recommend',
               success: function(ret) {
-                let result = ret['response']['recomPlaylist']['data']['v_hot'];
-                console.log(ret['response']['recomPlaylist']['data']['v_hot']);
-                 _this.songlists = result;
+                let result = ret['recomPlaylist']['data']['v_hot'];
+                //console.log(ret['recomPlaylist']['data']['v_hot']);
+                _this.songlists = result;
               },
               error: function() {
                 alert('fail');

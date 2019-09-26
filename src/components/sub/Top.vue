@@ -74,6 +74,7 @@ h1, h2 {
   display: inline-block;
   width: 100px;
   height: 100px;
+  margin-top: 10px;
 }
 .topic_media>img{
   width:100%;
