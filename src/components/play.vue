@@ -21,7 +21,7 @@
                 <div id="lyric" class="lyric">
                     <div id="lyric_box" class="lyric_box">
                         <div id="lyricDiv" class="lyric_text">
-                            <p></p>
+                           
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         </div>
                   </div>
                   <span class="progress__start js-time-start">00:01</span>
-                  <span class="progress__end js-time-total">03:52</span>
+                  <span class="progress__end js-time-total">{{songtime}}</span>
               </div>
       </div>
       <div class="bg blur" id="bg" v-bind:style="{backgroundImage: 'url(' + img_url + ')'}"></div>
@@ -60,7 +60,8 @@ export default {
       song_url:"",
       img_url:'',
       song_info:'',
-      lyric:''
+      lyric:'',
+      songtime:'00:01'
     }
    },
    methods:{
@@ -86,17 +87,22 @@ export default {
       },
       getSongUrl(vkey,filename){
           let _this=this,_vkey=vkey,_filename=filename;
-          _this.song_url=`http://ws.stream.qqmusic.qq.com/${_filename}?guid=4529237216&vkey=${_vkey}&fromtag=0`;           
+          _this.song_url=`http://ws.stream.qqmusic.qq.com/${_filename}?guid=4529237216&vkey=${_vkey}&fromtag=0`;   
+           //mid = `001qvvgF38HVc4` ;  
+           //`http://dl.stream.qqmusic.qq.com/001qvvgF38HVc4.mp3?vkey=DD130F9FA767685133708324FB88058EE4509384F74C443504B1B811B540B66E7AEB82658511FB0F0CF3E0A67C2C72BD1FED38B4D51D1036&guid=YYFM&uin=123456&fromtag=53`;
+     
       },
       getlyric(){
           let _this=this;
           $.ajax({
               type: "get",
               async: false,
-              url:`http://my.sharpwuqing.cn/lyric?songmid=${this.song_info.songmid}`,
+              url:`https://my.sharpwuqing.cn/lyric?songmid=${this.song_info.songmid}`,
               dataType: "json",
               success: function(res) {
-                  console.log(res);
+                  let lyric = res['lyric'];
+                  let tmp = _this.matchLyric(lyric);
+                  console.log(tmp);
               },
               error: function() {
                 alert('fail');
@@ -104,6 +110,7 @@ export default {
           });
       },
       playSong(){
+          let _this=this;
           if($(".js-play").hasClass("icon_play--pause")){
                $(".js-play").removeClass("icon_play--pause");
                this.song_url="";
@@ -111,10 +118,70 @@ export default {
             $(".js-play").addClass("icon_play--pause");
             this.searchMusicUrl();
             this.getlyric();
-            let attribute  = $('#music-player').attr('duration');
-            //console.log(this.$route.params.data);
-            console.log(attribute);
+            let audio = document.getElementById('music-player');
+            audio.addEventListener('loadedmetadata',function(){
+                    let ts = audio.duration;
+                    let m =  Math.floor(ts/60);
+                    let s = Math.round(ts%60);
+                    let long = m>10 ? `${m}:${s}` : `0${m}:${s}`;
+                    _this.songtime = long;
+                    console.log(audio.duration,audio.currentTime,long);
+            });
+            let p = $("#lyricDiv p");
+            console.log(p);
+            audio.addEventListener('timeupdate',function(){
+                    _this.showLyric(audio.currentTime);
+            });
+            
           }
+      },
+      matchLyric(lyric){
+                    let lyric_arr = lyric.split(/\n+/);
+                    let tmp = [];
+                    lyric_arr.forEach(el => {
+                        let  arg1 = /^\[\d/;
+                        if(el.match(arg1)){
+                                tmp.push(el);
+                                let p = document.createElement('p');
+                                let regex = /\[([\d:.]+)\]([\s\S]*)/;
+                                let matches =el.match(regex);
+                                if(matches){
+                                    p.textContent = matches[2];
+                                    let arr = matches[1].split(':');
+                                    let mins=arr[0];
+                                    let seconds=arr[1];
+                                    let newTime=parseInt(mins)*60+parseFloat(seconds);
+                                    $(p).attr('data-time', newTime);
+                                }else{
+                                    p.textContent = '';
+                                }
+                            $('#lyricDiv').append(p);
+                        }
+                    });
+        
+                    return tmp; 
+      },
+      showLyric(time){
+          let $allP= $("#lyricDiv p");
+            let currentP;
+            //当i=$allP.length-1时，$allP.eq(i+1)不存在，会报错，所以要判断一下。
+            for(let i=0;i<$allP.length;i++){
+                if(i===$allP.length-1){
+                    currentP=$allP[i]
+                    break
+                }else{
+                    let prevTime=$allP.eq(i).attr('data-time')
+                    let nextTime=$allP.eq(i+1).attr('data-time')
+                    if(prevTime<=time&&time<=nextTime){
+                        currentP=$allP[i]
+                        break
+                    }   
+                }
+                // 高亮p标签
+                $(currentP).addClass('active').siblings('.active').removeClass('active');
+                $('#lyricDiv').css('transform',`translateY(${-(24*i-24)}px)`);
+            }
+        
       }
    },
    created(){
@@ -450,5 +517,8 @@ h1,p{
     z-index: 2;
     width: 100%;
     background-color: #000;
+}
+.active{
+    color: #e49;
 }
 </style>

@@ -66,7 +66,7 @@ export default {
         $.ajax({
               type: "get",
               async: false,
-              url: 'http://my.sharpwuqing.cn/recommend',
+              url: 'https://my.sharpwuqing.cn/recommend',
               success: function(ret) {
                 let result = ret['recomPlaylist']['data']['v_hot'];
                 //console.log(ret['recomPlaylist']['data']['v_hot']);
